@@ -28,16 +28,12 @@
 // // fileOperation("files/text.txt", "add", "\nWho tok the cocing from");
 // // fileOperation("files/text.txt", "add", "\nI want to code");
 // fileOperation("files/text.txt", "replace", "\nI want to code");
+const yargs = require("yargs");
+const { hideBin } = require("yargs/helpers");
 
 const productsOperation = require("./db");
-/*
-1. get ALL - productsOperation.getAll 
-2. get 1  - productsOperation.getById
-3. add good - productsOperation.add
-4. update good - productsOperation.updateById
-5. delete good - productsOperation.removeById 
-*/
-const invokeProducts = async ({ action, id, data }) => {
+
+const invokeContacts = async ({ action, id, data }) => {
   switch (action) {
     case "getAll":
       const contacts = await productsOperation.getAll();
@@ -54,12 +50,20 @@ const invokeProducts = async ({ action, id, data }) => {
       const newContact = await productsOperation.add(data);
       console.table(newContact);
       break;
-    case "updataById":
+    case "updateById":
       const updateContact = await productsOperation.updateById(id, data);
       if (!updateContact) {
         throw new Error(`Contact with id=${id} not found`);
       }
       console.table(updateContact);
+      break;
+    case "removeById":
+      const removeContact = await productsOperation.removeById(id);
+      if (!removeContact) {
+        throw new Error(`Contact with id=${id} not found`);
+      }
+      console.table(removeContact);
+      break;
     default:
       console.log("Unknown ections");
   }
@@ -75,10 +79,16 @@ const invokeProducts = async ({ action, id, data }) => {
 // invokeProducts({ action: "getById", id });
 // invokeProducts({ action: "add", data: newData });
 
-// const updateId = "3f117581-24b0-46e2-bdef-ecc2b3da0716";
+// const updateId = "10";
 // const updataData = {
-//   name: "Marko Bruno",
+//   name: "Marko Ccichioni",
 //   email: "marco@marco.com",
 //   phone: "(888) 888-8888",
 // };
 // invokeProducts({ action: "updateById", id: updateId, data: updataData });
+
+// invokeProducts({ action: "removeById", id: updateId });
+
+const arr = hideBin(process.argv);
+const { argv } = yargs(arr);
+invokeContacts(argv);
