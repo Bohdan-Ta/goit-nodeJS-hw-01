@@ -1,64 +1,45 @@
-// const { write } = require("fs");
-// const fs = require("fs/promises");
+const { program } = require("commander");
+program
+  .option("-a, --action <type>", "choose action")
+  .option("-i, --id <type>", "user id")
+  .option("-n, --name <type>", "user name")
+  .option("-e, --email <type>", "user email")
+  .option("-p, --phone <type>", "user phone");
 
-// fs.readFile("files/text.txt", "utf8")
-//   .then((data) => {
-//     // const text = data.toString("utf-8");
-//     console.log(data);
-//   })
-//   .catch((error) => console.log(error.massege));
+program.parse(process.argv);
+const argv = program.opts();
 
-// const fileOperation = async (filePath, action = "read", data = "") => {
-//   switch (action) {
-//     case "read":
-//       const text = await fs.readFile(filePath, "utf-8");
-//       console.log(text);
-//       break;
-//     case "add":
-//       await fs.appendFile(filePath, data);
-//       break;
-//     case "replace":
-//       await fs.writeFile(filePath, data);
-//       break;
-//     default:
-//       console.log("action unknow");
-//   }
-// };
+// const yargs = require("yargs");
+// const { hideBin } = require("yargs/helpers");
 
-// // fileOperation("files/text.txt", "add", "\nWho tok the cocing from");
-// // fileOperation("files/text.txt", "add", "\nI want to code");
-// fileOperation("files/text.txt", "replace", "\nI want to code");
-const yargs = require("yargs");
-const { hideBin } = require("yargs/helpers");
+const contactsOperation = require("./db");
 
-const productsOperation = require("./db");
-
-const invokeContacts = async ({ action, id, data }) => {
+const invokeAction = async ({ action, id, data }) => {
   switch (action) {
     case "getAll":
-      const contacts = await productsOperation.getAll();
+      const contacts = await contactsOperation.getAll();
       console.table(contacts);
       break;
     case "getById":
-      const contact = await productsOperation.getById(id);
+      const contact = await contactsOperation.getById(id);
       if (!contact) {
         throw new Error(`Contact with id=${id} not found`);
       }
       console.table(contact);
       break;
     case "add":
-      const newContact = await productsOperation.add(data);
+      const newContact = await contactsOperation.add(data);
       console.table(newContact);
       break;
     case "updateById":
-      const updateContact = await productsOperation.updateById(id, data);
+      const updateContact = await contactsOperation.updateById(id, data);
       if (!updateContact) {
         throw new Error(`Contact with id=${id} not found`);
       }
       console.table(updateContact);
       break;
     case "removeById":
-      const removeContact = await productsOperation.removeById(id);
+      const removeContact = await contactsOperation.removeById(id);
       if (!removeContact) {
         throw new Error(`Contact with id=${id} not found`);
       }
@@ -69,15 +50,15 @@ const invokeContacts = async ({ action, id, data }) => {
   }
 };
 
-// const id = "8";
+// const id = "3";
 // const newData = {
 //   name: "Mark robocop",
 //   email: "polo@marco.com",
 //   phone: "(333) 111-2233",
 // };
-// invokeProducts({ action: "getAll" });
-// invokeProducts({ action: "getById", id });
-// invokeProducts({ action: "add", data: newData });
+// invokeAction({ action: "getAll" });
+// invokeAction({ action: "getById", id });
+// invokeAction({ action: "add", data: newData });
 
 // const updateId = "10";
 // const updataData = {
@@ -89,6 +70,6 @@ const invokeContacts = async ({ action, id, data }) => {
 
 // invokeProducts({ action: "removeById", id: updateId });
 
-const arr = hideBin(process.argv);
-const { argv } = yargs(arr);
-invokeContacts(argv);
+// const arr = hideBin(process.argv);
+// const { argv } = yargs(arr);
+invokeAction(argv);

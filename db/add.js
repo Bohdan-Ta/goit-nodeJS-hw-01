@@ -1,4 +1,5 @@
 const { v4 } = require("uuid");
+const getAll = require("./getAll");
 
 const updateContacts = require("./updateContacts");
 
