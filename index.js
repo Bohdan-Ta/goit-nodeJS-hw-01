@@ -1,75 +1,55 @@
-const { program } = require("commander");
+const { program } = require('commander');
 program
-  .option("-a, --action <type>", "choose action")
-  .option("-i, --id <type>", "user id")
-  .option("-n, --name <type>", "user name")
-  .option("-e, --email <type>", "user email")
-  .option("-p, --phone <type>", "user phone");
+  .option('-a, --action <type>', 'choose action')
+  .option('-i, --id <type>', 'user id')
+  .option('-n, --name <type>', 'user name')
+  .option('-e, --email <type>', 'user email')
+  .option('-p, --phone <type>', 'user phone');
 
 program.parse(process.argv);
 const argv = program.opts();
 
-// const yargs = require("yargs");
-// const { hideBin } = require("yargs/helpers");
+const contactsOperation = require('./contacts');
 
-const contactsOperation = require("./db");
-
-const invokeAction = async ({ action, id, data }) => {
+const invokeAction = async ({ action, id, name, email, phone }) => {
   switch (action) {
-    case "getAll":
-      const contacts = await contactsOperation.getAll();
+    case 'list':
+      const contacts = await contactsOperation.listContacts();
       console.table(contacts);
       break;
-    case "getById":
-      const contact = await contactsOperation.getById(id);
+    case 'get':
+      const contact = await contactsOperation.getContactById(id);
       if (!contact) {
         throw new Error(`Contact with id=${id} not found`);
       }
       console.table(contact);
       break;
-    case "add":
-      const newContact = await contactsOperation.add(data);
+    case 'add':
+      const newContact = await contactsOperation.addContact(name, email, phone);
       console.table(newContact);
       break;
-    case "updateById":
-      const updateContact = await contactsOperation.updateById(id, data);
+    case 'update':
+      const updateContact = await contactsOperation.updateContactById(
+        id,
+        name,
+        email,
+        phone,
+      );
       if (!updateContact) {
         throw new Error(`Contact with id=${id} not found`);
       }
       console.table(updateContact);
       break;
-    case "removeById":
-      const removeContact = await contactsOperation.removeById(id);
+    case 'remove':
+      const removeContact = await contactsOperation.removeContact(id);
       if (!removeContact) {
         throw new Error(`Contact with id=${id} not found`);
       }
       console.table(removeContact);
       break;
     default:
-      console.log("Unknown ections");
+      console.warn('\x1B[31m Unknown action type!');
   }
 };
 
-// const id = "3";
-// const newData = {
-//   name: "Mark robocop",
-//   email: "polo@marco.com",
-//   phone: "(333) 111-2233",
-// };
-// invokeAction({ action: "getAll" });
-// invokeAction({ action: "getById", id });
-// invokeAction({ action: "add", data: newData });
-
-// const updateId = "10";
-// const updataData = {
-//   name: "Marko Ccichioni",
-//   email: "marco@marco.com",
-//   phone: "(888) 888-8888",
-// };
-// invokeProducts({ action: "updateById", id: updateId, data: updataData });
-
-// invokeProducts({ action: "removeById", id: updateId });
-
-// const arr = hideBin(process.argv);
-// const { argv } = yargs(arr);
 invokeAction(argv);
