@@ -7,7 +7,7 @@ const updateContactById = async (id, name, email, phone) => {
   if (idx === -1) {
     return null;
   }
-  contacts[idx] = { ...{ name, email, phone }, id };
+  contacts[idx] = { name, email, phone, id };
   await updateContacts(contacts);
   return contacts[idx];
 };
